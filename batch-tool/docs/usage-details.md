@@ -256,7 +256,7 @@ mask: >-
    不是utf8mb4
 
    **解决**：Linux系统上，可以通过`locale`命令查看编码；
-   如果是数据库`character_set_server`变量的问题，BatchTool可以加上`-connParam "useUnicode=true&characterEncoding=utf-8"`
+   如果是数据库`character_set_server`变量的问题，BatchTool可以加上`-param "useUnicode=true&characterEncoding=utf-8"`
 
 12. 使用`-con`指定了消费者线程数不生效
 
