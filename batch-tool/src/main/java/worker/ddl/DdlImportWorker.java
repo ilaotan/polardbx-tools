@@ -25,10 +25,8 @@ import util.FileUtil;
 import worker.MyThreadPool;
 
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -46,7 +44,7 @@ import static model.config.GlobalVar.DDL_RETRY_COUNT;
 public class DdlImportWorker {
 
     private static final Logger logger = LoggerFactory.getLogger(DdlExportWorker.class);
-    private static final int MAX_SQL_SAMPLE_LEN = 50;
+    private static final int MAX_SQL_SAMPLE_LEN = 100;
 
     private final List<String> filepaths = new ArrayList<>();
     private final DataSource dataSource;
@@ -99,6 +97,13 @@ public class DdlImportWorker {
                     processLines(reader, sqlStringBuilder);
                     sqlStringBuilder.setLength(0);
                 }
+               /* try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(filepath), StandardCharsets.UTF_8))) {
+                    processLines(reader, sqlStringBuilder);
+                    sqlStringBuilder.setLength(0);
+                }*/
+
+
             }
             sqlStringBuilder.setLength(0);
         } catch (IOException e) {

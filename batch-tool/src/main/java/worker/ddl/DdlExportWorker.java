@@ -18,15 +18,15 @@ package worker.ddl;
 
 import exception.DatabaseException;
 import model.config.ExportConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.DbUtil;
 import util.IOUtil;
 
 import javax.sql.DataSource;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -108,9 +108,13 @@ public class DdlExportWorker implements Runnable {
             String mode = matcher.group(1);
             dbDdl = String.format("%s mode = '%s'", dbDdl, mode);
         }
-        writeLine(dbDdl + ";");
+
+        dbDdl = StringUtils.substringBeforeLast(dbDdl, "MODE =");
+        dbDdl = StringUtils.substringBeforeLast(dbDdl, "mode =");
+
+        writeLine("-- " + dbDdl + ";");
         writeLine("");
-        writeLine(String.format("use %s;", dbName));
+        writeLine(String.format("-- use %s;", dbName));
         writeLine("");
     }
 
@@ -119,6 +123,19 @@ public class DdlExportWorker implements Runnable {
 
         beforeCreateTable(tableName);
         String tableDdl = DbUtil.getShowCreateTable(conn, tableName);
+
+        tableDdl = tableDdl.replace("GLOBAL INDEX", "KEY");
+        tableDdl = tableDdl.replace("LOCAL KEY", "KEY");
+
+        // 带逗号的情况
+        tableDdl = tableDdl.replaceAll("\\s*PARTITION\\b[^,]*,", ",");
+        // 不带逗号(最后一条索引)的情况
+        tableDdl = tableDdl.replaceAll("\\s*PARTITION\\b.*\\n\\s*.*?\\n", "\n");
+
+        tableDdl = StringUtils.substringBeforeLast(tableDdl, "PARTITION BY");
+        tableDdl = StringUtils.substringBeforeLast(tableDdl, "SINGLE");
+
+
         writeLine(tableDdl + ";");
         writeLine("");
     }
@@ -153,7 +170,12 @@ public class DdlExportWorker implements Runnable {
     }
 
     private void beforeRun() throws Exception {
+
         bufferedWriter = new BufferedWriter(new FileWriter(getFilepath()));
+
+/*        bufferedWriter = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(getFilepath()), StandardCharsets.UTF_8)
+        );*/
     }
 
     private String getFilepath() {
