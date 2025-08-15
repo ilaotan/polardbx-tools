@@ -14,8 +14,8 @@
         <maven.test.skip>false</maven.test.skip>
         <downloadSources>true</downloadSources>
         <!-- compiler settings properties -->
-        <java_source_version>11</java_source_version>
-        <java_target_version>11</java_target_version>
+        <java_source_version>17</java_source_version>
+        <java_target_version>17</java_target_version>
         <file_encoding>UTF-8</file_encoding>
         <!-- Log libs -->
         <slf4j_version>1.7.36</slf4j_version>

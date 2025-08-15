@@ -20,7 +20,7 @@ import cmd.ConfigResult;
 import datasource.DataSourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Version;
+//import util.Version;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -56,7 +56,7 @@ public class BatchToolLauncher {
     }
 
     private static void printStartInfo() {
-        logger.info("BatchTool version: {}", Version.getVersion());
+//        logger.info("BatchTool version: {}", Version.getVersion());
         try {
             MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
             MemoryUsage heapUsage = memoryMXBean.getHeapMemoryUsage();
